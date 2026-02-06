@@ -22,7 +22,7 @@ React-based web application with two distinct user flows.
     - **AI Alerts Panel**: Incoming risk list.
 - **High-Risk View**:
     - Auto-focuses on camera when Risk > High.
-    - Shows Victim Name & Location.
+    - Shows Victim Name & Location1.
 
 ## Setup & Run
 ```bash
