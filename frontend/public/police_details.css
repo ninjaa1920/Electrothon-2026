@@ -1,0 +1,148 @@
+========================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+/* =========================
+   BACKGROUND
+========================= */
+body {
+    height: 100vh;
+    background: linear-gradient(
+        135deg,
+        #667eea,
+        #764ba2,
+        #a18cd1
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* =========================
+   MAIN WRAPPER
+========================= */
+.wrap {
+    background: rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-radius: 28px;
+    padding: 50px 45px;
+    width: 380px;
+
+    box-shadow:
+        0 20px 45px rgba(0, 0, 0, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+/* =========================
+   HEADER
+========================= */
+.hd h1 {
+    text-align: center;
+    color: #3b2d73;
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+
+.lead {
+    text-align: center;
+    font-size: 14px;
+    color: #4a4a4a;
+    margin-bottom: 30px;
+}
+
+/* =========================
+   FORM
+========================= */
+.form label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #333;
+}
+
+.form input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: none;
+    margin-bottom: 18px;
+    font-size: 14px;
+    outline: none;
+}
+
+.form input:focus {
+    box-shadow: 0 0 0 2px rgba(118, 75, 162, 0.4);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.row.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btn {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    border-radius: 25px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+/* Proceed button */
+.btn.primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+}
+
+.btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(118, 75, 162, 0.5);
+}
+
+/* Back button */
+.btn:not(.primary) {
+    background: #ffffff;
+    color: #444;
+}
+
+.btn:not(.primary):hover {
+    background: #f0f0f0;
+}
+
+/* =========================
+   ERROR MESSAGE
+========================= */
+.message.error {
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(255, 0, 0, 0.15);
+    color: #a30000;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 420px) {
+    .wrap {
+        width: 90%;
+        padding: 40px 30px;
+    }
+}
+

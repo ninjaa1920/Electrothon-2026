@@ -24,7 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.render("first"); // loads first.ejs
 });
-
+app.get("/police/login",(req,res)=>{
+    res.render("police_details")
+})
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
