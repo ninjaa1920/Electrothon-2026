@@ -4,3 +4,6 @@ mediapipe
 numpy
 python-socketio
 requests
+torch
+torchvision
+torchaudio
