@@ -27,6 +27,9 @@ app.get("/", (req, res) => {
 app.get("/police/login",(req,res)=>{
     res.render("police_details")
 })
+app.get("/women/login",(req,res)=>{
+    res.render("auth")
+})
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
