@@ -29,16 +29,16 @@
       </aside>
 
       <div class="forms">
-        <form id="login" class="form active" novalidate>
+        <form id="login" class="form active" action="/women/login" method="POST">
           <h2>Sign in to SafeSpace</h2>
           <div class="field">
             <label>Email
-              <input type="email" id="login-email" placeholder="you@example.com" required>
+              <input type="email" name="email" placeholder="you@example.com" required>
             </label>
           </div>
           <div class="field">
             <label>Password
-              <input type="password" id="login-password" placeholder="Your password" required>
+              <input type="password" name="password" placeholder="Your password" required>
             </label>
           </div>
           <div class="row">
@@ -49,32 +49,35 @@
           <div class="message" id="login-msg" aria-live="polite"></div>
         </form>
 
-        <form id="register" class="form" novalidate>
-          <h2>Create SafeSpace Account</h2>
-          <div class="field">
-            <label>Full name
-              <input type="text" id="reg-name" placeholder="Jane Doe" required>
-            </label>
-          </div>
-          <div class="field">
-            <label>Email
-              <input type="email" id="reg-email" placeholder="you@example.com" required>
-            </label>
-          </div>
-          <div class="field">
-            <label>Password
-              <input type="password" id="reg-password" placeholder="Min 6 characters" minlength="6" required>
-            </label>
-          </div>
-          <div class="field">
-            <label>Confirm Password
-              <input type="password" id="reg-confirm" placeholder="Repeat password" required>
-            </label>
-          </div>
-          <button type="submit" class="btn">Register</button>
-          <p class="switch">Have an account? <a href="#" data-switch="login">Login</a></p>
-          <div class="message" id="reg-msg" aria-live="polite"></div>
-        </form>
+       <form id="register" class="form" action="/women/register" method="POST">
+  <h2>Create SafeSpace Account</h2>
+
+  <div class="field">
+    <label>Full name
+      <input type="text" name="name" placeholder="Jane Doe" required>
+    </label>
+  </div>
+
+  <div class="field">
+    <label>Email
+      <input type="email" name="email" placeholder="you@example.com" required>
+    </label>
+  </div>
+
+  <div class="field">
+    <label>Password
+      <input type="password" name="password" minlength="6" required>
+    </label>
+  </div>
+
+  <div class="field">
+    <label>Confirm Password
+      <input type="password" required>
+    </label>
+  </div>
+
+  <button type="submit" class="btn">Register</button>
+</form>
       </div>
     </div>
   </div>
