@@ -5,7 +5,6 @@ import threading
 import requests
 from ultralytics import YOLO
 
-# Import our custom modules
 from modules.gender import GenderClassifier
 from modules.risk import RiskEngine
 from modules.sos import SOSDetector
@@ -29,7 +28,7 @@ class AIEngine:
         self.sos_detector = SOSDetector()
         
         self.running = True
-
+        
     def connect_socket(self):
         try:
             self.sio.connect(BACKEND_URL)
@@ -124,6 +123,7 @@ class AIEngine:
         cap.release()
         cv2.destroyAllWindows()
         self.sio.disconnect()
+
 
 if __name__ == '__main__':
     engine = AIEngine()
