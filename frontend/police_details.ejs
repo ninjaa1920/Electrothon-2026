@@ -4,8 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Police Details</title>
-    <link rel="stylesheet" href="police_details.css">
+    <link rel="stylesheet" href="/police_details.css">
   </head>
+
   <body>
     <main class="wrap">
       <header class="hd">
@@ -13,7 +14,8 @@
         <p class="lead">Provide officer information (visible when Police is selected)</p>
       </header>
 
-      <form id="policeForm" class="form">
+      <form class="form" action="/police/verify" method="POST">
+
         <label for="officerName">Officer Name</label>
         <input id="officerName" name="officerName" placeholder="Officer Jane Doe" required />
 
@@ -22,13 +24,14 @@
 
         <div class="row actions">
           <button type="submit" class="btn primary">Proceed</button>
-          <a class="btn" href="police_identification.html">Back</a>
+          <a class="btn" href="/">Back</a>
         </div>
       </form>
 
-      <div id="message" class="message" aria-live="polite"></div>
+      <% if (typeof error !== "undefined") { %>
+        <div class="message error"><%= error %></div>
+      <% } %>
     </main>
-
-    <script src="police_details.js"></script>
   </body>
 </html>
+
