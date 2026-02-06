@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login · Register</title>
+  <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="card">
+      <div class="tabs" role="tablist" aria-label="Authentication tabs">
+        <button class="tab active" data-target="login" role="tab" aria-selected="true">Login</button>
+        <button class="tab" data-target="register" role="tab">Register</button>
+      </div>
+
+      <aside class="aside">
+        <div class="brand">
+          <h1>SafeSpace</h1>
+          <p>Women safety — resources, quick help, and support.</p>
+        </div>
+        <ul class="tips">
+          <li>Share your location with trusted contacts.</li>
+          <li>Memorize local emergency numbers.</li>
+          <li>Trust your instincts — leave unsafe places.</li>
+        </ul>
+        <button id="emergency-btn" class="emergency">Emergency Help</button>
+        <div class="emergency-msg" id="emergency-msg" aria-live="polite"></div>
+      </aside>
+
+      <div class="forms">
+        <form id="login" class="form active" novalidate>
+          <h2>Sign in to SafeSpace</h2>
+          <div class="field">
+            <label>Email
+              <input type="email" id="login-email" placeholder="you@example.com" required>
+            </label>
+          </div>
+          <div class="field">
+            <label>Password
+              <input type="password" id="login-password" placeholder="Your password" required>
+            </label>
+          </div>
+          <div class="row">
+            <label class="checkbox"><input type="checkbox" id="remember"> Remember me</label>
+          </div>
+          <button type="submit" class="btn">Login</button>
+          <p class="switch">Don't have an account? <a href="#" data-switch="register">Register</a></p>
+          <div class="message" id="login-msg" aria-live="polite"></div>
+        </form>
+
+        <form id="register" class="form" novalidate>
+          <h2>Create SafeSpace Account</h2>
+          <div class="field">
+            <label>Full name
+              <input type="text" id="reg-name" placeholder="Jane Doe" required>
+            </label>
+          </div>
+          <div class="field">
+            <label>Email
+              <input type="email" id="reg-email" placeholder="you@example.com" required>
+            </label>
+          </div>
+          <div class="field">
+            <label>Password
+              <input type="password" id="reg-password" placeholder="Min 6 characters" minlength="6" required>
+            </label>
+          </div>
+          <div class="field">
+            <label>Confirm Password
+              <input type="password" id="reg-confirm" placeholder="Repeat password" required>
+            </label>
+          </div>
+          <button type="submit" class="btn">Register</button>
+          <p class="switch">Have an account? <a href="#" data-switch="login">Login</a></p>
+          <div class="message" id="reg-msg" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>
