@@ -1,37 +1,38 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Police Details</title>
-    <link rel="stylesheet" href="/police_details.css">
-  </head>
 
-  <body>
-    <main class="wrap">
-      <header class="hd">
-        <h1>Police Details</h1>
-        <p class="lead">Provide officer information (visible when Police is selected)</p>
-      </header>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Police Details</title>
+  <link rel="stylesheet" href="/police_details.css">
+</head>
 
-      <form class="form" action="/police/verify" method="POST">
+<body>
+  <main class="wrap">
+    <header class="hd">
+      <h1>Police Details</h1>
+      <p class="lead">Provide officer information (visible when Police is selected)</p>
+    </header>
 
-        <label for="officerName">Officer Name</label>
-        <input id="officerName" name="officerName" placeholder="Officer Jane Doe" required />
+    <form class="form" action="/police/login" method="POST">
 
-        <label for="batchNo">Batch Number</label>
-        <input id="batchNo" name="batchNo" placeholder="e.g. BATCH-12345" required />
+      <label>Officer Name</label>
+      <input type="text" name="officer_name" required>
 
-        <div class="row actions">
-          <button type="submit" class="btn primary">Proceed</button>
-          <a class="btn" href="/">Back</a>
+      <label>Batch Number</label>
+      <input type="text" name="batch_number" required>
+
+      <button type="submit" class="btn primary">Login</button>
+
+      <% if (typeof error !=="undefined" ) { %>
+        <div class="message error">
+          <%= error %>
         </div>
-      </form>
+        <% } %>
 
-      <% if (typeof error !== "undefined") { %>
-        <div class="message error"><%= error %></div>
-      <% } %>
-    </main>
-  </body>
+    </form>
+  </main>
+</body>
+
 </html>
-
