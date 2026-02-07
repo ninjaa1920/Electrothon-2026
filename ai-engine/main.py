@@ -21,9 +21,9 @@ BACKEND_URL = 'http://localhost:3000'
 YOLO_MODEL_PATH = 'yolov8n.pt' # Standard YOLOv8 Nano
 
 # LOCATION CONFIGURATION (Hardcoded for Laptop/Camera 1)
-LATITUDE = 28.644800  
-LONGITUDE = 77.216721
-LOCATION_NAME = "Camera_01"
+LATITUDE = 23.41  
+LONGITUDE = 85.44
+LOCATION_NAME = "BIT Mesra - Camera 01"
 
 class AIEngine:
     def __init__(self):
