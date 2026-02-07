@@ -2,104 +2,93 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import pkg from "pg";
+import http from "http";
+import { Server } from "socket.io";
+
 const { Pool } = pkg;
 const DEMO_MODE = true;
 
-const db = new Pool({
-    user: "postgres",
-    host: "localhost",
-    database: "postgres",
-    password: "Debayan@1904",
-    port: 5432,
-});
+/* 1️⃣ CREATE EXPRESS APP FIRST */
 const app = express();
+
+/* 2️⃣ CREATE HTTP SERVER + SOCKET.IO */
+const server = http.createServer(app);
+const io = new Server(server);
+
+/* 3️⃣ DATABASE (optional in demo) */
+const db = new Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "postgres",
+  password: "Debayan@1904",
+  port: 5432,
+});
+
+/* 4️⃣ SOCKET.IO LOGIC */
+let latestRisk = {
+  level: "Safe",
+  description: ""
+};
+    
+
+
+
+
+
+
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  socket.emit("risk_update", latestRisk);
+
+  socket.on("new_alert", (data) => {
+    console.log("🚨 AI ALERT:", data);
+
+    latestRisk = {
+      level: data.riskLevel,
+      description: data.description
+    };
+
+    io.emit("risk_update", latestRisk);
+  });
+});
+
+/* 5️⃣ EXPRESS CONFIG */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "../frontend"));
 app.use(express.static(path.join(__dirname, "../frontend/public")));
 app.use(express.urlencoded({ extended: true }));
-app.get("/", (req, res) => {
-    res.render("first");
-});
-app.get("/police/login", (req, res) => {
-    res.render("police_details")
-})
-app.get("/women/login", (req, res) => {
-    res.render("auth")
-})
-app.post("/women/register", async (req, res) => {
-  if (DEMO_MODE) {
-    // DEMO MODE: skip DB
-    return res.redirect("/women/dashboard");
-  }
 
-  const { name, email, password } = req.body;
-  try {
-    await db.query(
-      "INSERT INTO women_users (name, email, password) VALUES ($1, $2, $3)",
-      [name, email, password]
-    );
-    res.redirect("/women/dashboard");
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error registering user");
-  }
-});
-app.post("/women/login", async (req, res) => {
-  if (DEMO_MODE) {
-    // DEMO MODE: allow anyone
-    return res.redirect("/women/dashboard");
-  }
+/* 6️⃣ ROUTES */
+app.get("/", (req, res) => res.render("first"));
+app.get("/women/login", (req, res) => res.render("auth"));
+app.get("/police/login", (req, res) => res.render("police_details"));
 
-  const { email, password } = req.body;
-  try {
-    const result = await db.query(
-      "SELECT * FROM women_users WHERE email = $1 AND password = $2",
-      [email, password]
-    );
-
-    if (result.rows.length > 0) {
-      res.redirect("/women/dashboard");
-    } else {
-      res.render("auth", { error: "Invalid email or password" });
-    }
-  } catch (err) {
-    console.error(err);
-    res.render("auth", { error: "Login failed" });
-  }
+app.post("/women/login", (req, res) => {
+  if (DEMO_MODE) return res.redirect("/women/dashboard");
 });
+
+app.post("/women/register", (req, res) => {
+  if (DEMO_MODE) return res.redirect("/women/dashboard");
+});
+
 app.get("/women/dashboard", (req, res) => {
-    res.render("women_dashboard");
+  res.render("women_dashboard");
 });
-app.post("/police/login", async (req, res) => {
-  if (DEMO_MODE) {
-    // DEMO MODE: skip DB verification
-    return res.redirect("/police/dashboard");
-  }
 
-  const { officer_name, batch_number } = req.body;
-  try {
-    const result = await db.query(
-      "SELECT * FROM police_users WHERE TRIM(UPPER(officer_name)) = TRIM(UPPER($1)) AND TRIM(UPPER(batch_number)) = TRIM(UPPER($2))",
-      [officer_name, batch_number]
-    );
-
-    if (result.rows.length > 0) {
-      res.redirect("/police/dashboard");
-    } else {
-      res.render("police_details", { error: "Unauthorized access" });
-    }
-  } catch (err) {
-    console.error(err);
-    res.render("police_details", { error: "Server error" });
-  }
+app.post("/police/login", (req, res) => {
+  if (DEMO_MODE) return res.redirect("/police/dashboard");
 });
 
 app.get("/police/dashboard", (req, res) => {
-    res.render("police_dashboard");
+  res.render("police_dashboard");
 });
+
+/* 7️⃣ START SERVER (REPLACES app.listen) */
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+server.listen(port, () => {
+  console.log(`✅ Server running on port ${port}`);
 });
