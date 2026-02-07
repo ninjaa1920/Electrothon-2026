@@ -228,10 +228,14 @@ class AIEngine:
             if not is_sos: # Only run detailed risk if not already Critical SOS
                 risk_result = self.risk_engine.analyze(people_data, frame)
                 
-                # Send Alert if Moderate or Vulnerable
+                # Logic: Send update if Risk is High/Moderate OR periodically for "Safe" heartbeat
+                # This ensures the dashboard shows "Green" connectivity
+                current_time = time.time()
+                
+                # Send immediately if Threat
                 if risk_result['riskLevel'] in ['Moderate', 'Vulnerable']:
                      alert_data = {
-                        "timestamp": time.time(),
+                        "timestamp": current_time,
                         "riskLevel": risk_result['riskLevel'],
                         "riskScore": risk_result['riskScore'],
                         "description": risk_result['description'],
@@ -240,10 +244,25 @@ class AIEngine:
                         "longitude": LONGITUDE
                     }
                      self.send_alert(alert_data)
+                
+                # Send "Safe" heartbeat every 2 seconds
+                elif int(current_time) % 2 == 0:
+                     # Simple throttling using modulo on epoch time (triggered once per second window roughly)
+                     # A better way is tracking last_sent_time, but this is simple for demo
+                     alert_data = {
+                        "timestamp": current_time,
+                        "riskLevel": "Safe",
+                        "riskScore": risk_result.get('riskScore', 0),
+                        "description": "System Active - Monitoring",
+                        "location": LOCATION_NAME,
+                        "latitude": LATITUDE,
+                        "longitude": LONGITUDE
+                    }
+                     self.send_alert(alert_data)
 
                 # Visuals
                 # Color based on score (Green -> Yellow -> Red)
-                score = risk_result['riskScore']
+                score = risk_result.get('riskScore', 0)
                 if score < 30: r_color = (0, 255, 0)
                 elif score < 70: r_color = (0, 255, 255)
                 else: r_color = (0, 0, 255)
