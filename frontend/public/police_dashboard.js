@@ -45,15 +45,16 @@ socket.on("risk_update", (risk) => {
         statusBar.className = "status-bar safe";
         statusText.innerText = "🟢 STATUS: SAFE";
         riskLevelText.innerText = "Safe";
-        riskReasonText.innerText = "No threat detected";
+        riskReasonText.innerText = "System Active - Monitoring";
 
-        // Optional: Blue circle for active monitoring but safe
-        alertCircle = L.circle(alertLatLng, {
-            radius: 100,
-            color: "blue",
-            fillColor: "#2196f3",
-            fillOpacity: 0.1,
-        }).addTo(map);
+        // IMPORTANT: We do NOT update map or location for Safe status
+        // as per requirements (Police only sees location on Alert)
+        if (alertCircle) map.removeLayer(alertCircle);
+        if (alertMarker) map.removeLayer(alertMarker);
+
+        // Clear text fields if safe
+        locationIdText.innerText = "--";
+        riskScoreText.innerText = "--";
     }
 
     /* ===== MODERATE ===== */
@@ -62,6 +63,10 @@ socket.on("risk_update", (risk) => {
         statusText.innerText = "🟠 STATUS: MODERATE ALERT";
         riskLevelText.innerText = risk.level;
         riskReasonText.innerText = risk.description || "Suspicious activity";
+
+        // Update Text Fields
+        locationIdText.innerText = risk.location || "Unknown";
+        riskScoreText.innerText = risk.riskScore ? `${risk.riskScore}%` : "--";
 
         alertCircle = L.circle(alertLatLng, {
             radius: 300,
@@ -83,6 +88,10 @@ socket.on("risk_update", (risk) => {
         statusText.innerText = "🔴 STATUS: CRITICAL ALERT";
         riskLevelText.innerText = risk.level;
         riskReasonText.innerText = risk.description || "Severe threat detected";
+
+        // Update Text Fields
+        locationIdText.innerText = risk.location || "Unknown";
+        riskScoreText.innerText = risk.riskScore ? `${risk.riskScore}%` : "--";
 
         alertCircle = L.circle(alertLatLng, {
             radius: 500,

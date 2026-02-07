@@ -6,49 +6,49 @@
     <title>Women Dashboard | SafeSpace</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/dash.css">
-    <link
-       rel="stylesheet"
-       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
 <body>
     <div class="dashboard">
 
-
         <header class="header">
             <h1>SafeSpace</h1>
             <p>Your safety, always with you 💗</p>
         </header>
+
         <section class="cards">
-            <div class="card">
-                <section class="cards">
 
-                    <div class="card location-card">
-                        <h3>Location</h3>
+            <!-- Location Control Card -->
+            <div class="card location-card">
+                <h3>System Status</h3>
 
-                        <p id="locationStatus" class="status success">
-                            Live tracking disabled
-                        </p>
+                <p id="locationStatus" class="status success">
+                    Connecting...
+                </p>
 
-                        <div class="button-group">
-                            <button id="enableBtn" class="enable-btn">Enable</button>
-                            <button id="disableBtn" class="disable-btn">Disable</button>
-                        </div>
-                    </div>
-
-                </section>
-
-
-                <div class="card">
-                    <h3>⚠️ Risk Level</h3>
-                    <p class="status low">LOW</p>
+                <!-- Hidden by default unless we want manual controls -->
+                <div class="button-group" style="display:none;">
+                    <button id="enableBtn" class="enable-btn">Enable</button>
+                    <button id="disableBtn" class="disable-btn">Disable</button>
                 </div>
+            </div>
+
+            <!-- Risk Level Card -->
+            <div class="card">
+                <h3>⚠️ Risk Level</h3>
+                <p id="riskLevelText" class="status low">SAFE</p>
+            </div>
+
         </section>
-        <section class="map-card" id="mapSection" style="display: none;">
-            <h3>🗺️ Your Live Location</h3>
+
+        <!-- Map Section -->
+        <section class="map-card" id="mapSection">
+            <h3>🗺️ Live Monitoring WebCam</h3>
             <div id="map"></div>
         </section>
+
+        <!-- SOS Section -->
         <section class="sos-card">
             <button id="sosBtn">🆘 SEND SOS</button>
             <p class="sos-note">Use only in case of emergency</p>
@@ -56,16 +56,11 @@
 
     </div>
 
-    <!-- FRONTEND JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- SCRIPTS -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/women_dashboard.js"></script>
-
-    <!-- LEAFLET MAPS (FREE, NO API KEY) -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/women_dashboard.js"></script>
 </body>
 
 </html>

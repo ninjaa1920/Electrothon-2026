@@ -1,3 +1,4 @@
+/* ================= RESET & FONT ================= */
 * {
   margin: 0;
   padding: 0;
@@ -14,12 +15,6 @@ body {
   align-items: center;
   padding: 30px;
 }
-.location-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 
 /* ================= MAIN DASHBOARD ================= */
 .dashboard {
@@ -29,231 +24,166 @@ body {
   backdrop-filter: blur(20px);
   border-radius: 30px;
   padding: 35px;
-  box-shadow: 
+  box-shadow:
     0 25px 50px rgba(0, 0, 0, 0.25),
     inset 0 0 20px rgba(255, 255, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 
 /* ================= HEADER ================= */
-.header {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
 .header h1 {
-  font-size: 20px;
-  color: #6b1b5f;
-  font-weight: 700;
+  font-size: 2.5rem;
+  color: #8e44ad;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header p {
-  font-size: 15px;
-  color: #444;
-  margin-top: 6px;
+  color: #555;
+  font-size: 1.1rem;
 }
 
-/* ================= STATUS CARDS ================= */
+/* ================= CARDS CONTAINER ================= */
 .cards {
-  display: flex;
-  gap: 18px;
-  margin-bottom: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
 }
 
+/* ================= GENERIC CARD ================= */
 .card {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 18px;
-  padding: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   text-align: center;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  transition: transform 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
 }
 
 .card h3 {
-  font-size: 14px;
-  margin-bottom: 8px;
-  color: #333;
+  margin-bottom: 15px;
+  color: #4a4a4a;
+  font-size: 1.3rem;
 }
 
-/* ================= STATUS TEXT ================= */
+/* ================= STATUS INDICATORS ================= */
 .status {
-  font-weight: bold;
-  font-size: 16px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  padding: 10px 20px;
+  border-radius: 50px;
+  display: inline-block;
 }
 
 .status.success {
-  color: #2e7d32;
+  background: #d4edda;
+  color: #155724;
 }
 
 .status.low {
-  color: #1b5e20;
+  /* Updated dynamically */
+  background: #c3e6cb;
+  color: #155724;
 }
 
-/* ================= MAP SECTION ================= */
+.status.high {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* ================= BUTTONS ================= */
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.enable-btn {
+  background: #6c5ce7;
+  color: white;
+}
+
+.disable-btn {
+  background: #e17055;
+  color: white;
+}
+
+.enable-btn:hover {
+  background: #5649c0;
+}
+
+/* ================= MAP CARD ================= */
 .map-card {
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.6);
   padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+  border-radius: 20px;
+  height: 400px;
+  /* Fixed height for visual consistency */
+  display: flex;
+  flex-direction: column;
 }
 
 .map-card h3 {
-  font-size: 16px;
-  margin-bottom: 12px;
-  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
-/* Larger Square Map */
 #map {
+  flex: 1;
+  border-radius: 15px;
   width: 100%;
-  max-width: 600px;      /* makes it larger */
-  margin: 0 auto;        /* center it */
-  aspect-ratio: 1 / 1;   /* square */
-  border-radius: 18px;
-  overflow: hidden;
-  border: 3px solid rgba(255, 182, 193, 0.6);
 }
 
 /* ================= SOS SECTION ================= */
 .sos-card {
   text-align: center;
-}
-
-#sosBtn {
-  width: 100%;
-  padding: 18px;
-  border: none;
-  border-radius: 40px;
-  background: linear-gradient(135deg, #ff0844, #ff6a00);
-  color: white;
-  font-size: 18px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 12px 25px rgba(255, 65, 108, 0.6);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-#sosBtn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 18px 35px rgba(255, 65, 108, 0.8);
-}
-
-.sos-note {
-  font-size: 13px;
-  color: #555;
   margin-top: 10px;
 }
 
-/* ================= RESPONSIVE ================= */
-@media (max-width: 768px) {
-  .cards {
-    flex-direction: column;
-  }
-
-  #map {
-    max-width: 100%;
-  }
-}
-
-@media (max-width: 420px) {
-  .dashboard {
-    width: 95%;
-    padding: 20px;
-  }
-}
-/* ================= TOGGLE SWITCH ================= */
-
-.toggle-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 15px;
-  font-weight: 600;
-}
-
-/* Switch Wrapper */
-.switch {
-  position: relative;
-  width: 60px;
-  height: 30px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* Slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-/* Circle */
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  bottom: 4px;
-  background: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-/* ON state */
-input:checked + .slider {
-  background: linear-gradient(135deg, #ff0844, #ff6a00);
-}
-
-input:checked + .slider:before {
-  transform: translateX(30px);
-}
-/* Button Group */
-.button-group {
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-/* Enable Button */
-.enable-btn {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 20px;
-  background: #2e7d32;
+#sosBtn {
+  background: #ff4757;
   color: white;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.3s ease;
+  font-size: 1.5rem;
+  padding: 20px 50px;
+  border-radius: 50px;
+  box-shadow: 0 10px 25px rgba(255, 71, 87, 0.4);
+  animation: pulse 2s infinite;
 }
 
-.enable-btn:hover {
-  background: #1b5e20;
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+  }
+
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(255, 71, 87, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+  }
 }
 
-/* Disable Button */
-.disable-btn {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 20px;
-  background: #c62828;
-  color: white;
-  font-size: 13px;
-  cursor: pointer;
-  transition: 0.3s ease;
-}
-
-.disable-btn:hover {
-  background: #8e0000;
+.sos-note {
+  margin-top: 10px;
+  color: #777;
+  font-size: 0.9rem;
 }
