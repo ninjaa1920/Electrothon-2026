@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Models (Large Files)
+*.pth
+*.pt
+*.tflite
+*.task
+
+# Datasets
+dataset/
+debug_faces/
+ai-engine/dataset/
+ai-engine/debug_faces/
+
+# Node
+node_modules/
+.DS_Store

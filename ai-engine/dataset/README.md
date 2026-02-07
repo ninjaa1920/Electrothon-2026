@@ -7,12 +7,17 @@ Folder structure created:
 - `dataset/val/female`: Put validation images of females here.
 
 ## Where to get data?
-You can download "Gender Classification Dataset" from Kaggle:
-[https://www.kaggle.com/datasets/cashbowman/gender-classification-dataset](https://www.kaggle.com/datasets/cashbowman/gender-classification-dataset)
+**Recommended Dataset:** "Gender Classification Dataset"
+**Link:** [https://www.kaggle.com/datasets/cashutosh/gender-classification-dataset](https://www.kaggle.com/datasets/cashutosh/gender-classification-dataset)
 
-Or search for "Male Female Face Dataset".
+**Is it separated?**
+YES. This dataset is **already separated** into `Training` and `Validation` folders, and inside those, `male` and `female` folders.
 
 ## Steps:
-1. Download the dataset.
+1. Download the dataset from the link above.
 2. Unzip it.
-3. If the downloaded dataset has `Training` and `Validation` folders, copy the contents of `Training/male` to `dataset/train/male`, etc.
+3. You will see folders like `Training` and `Validation`.
+   - Copy images from `Training/male` -> `dataset/train/male`
+   - Copy images from `Training/female` -> `dataset/train/female`
+   - Copy images from `Validation/male` -> `dataset/val/male`
+   - Copy images from `Validation/female` -> `dataset/val/female`

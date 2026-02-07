@@ -1,9 +1,9 @@
-opencv-python
+opencv-python>=4.8.0
 ultralytics
-mediapipe
-numpy
+mediapipe==0.10.9
+numpy<2.0.0
 python-socketio
 requests
-torch
+torch 
 torchvision
-torchaudio
+psutil

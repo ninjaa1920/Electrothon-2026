@@ -2,25 +2,29 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
+import cv2
+import os
 
 class GenderClassifier:
-    def __init__(self, weights_path=None):
+    def __init__(self, weights_path="vgg16_gender.pth"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         print(f"Loading VGG16 Gender Model on {self.device}...")
         
-        # Load pre-trained VGG16
-        self.model = models.vgg16(pretrained=True)
+        # Load VGG16 architecture (no need for ImageNet weights since we have our own)
+        self.model = models.vgg16(pretrained=False)
         
         # Modify the last layer for Binary Classification (Male/Female)
         num_features = self.model.classifier[6].in_features
         self.model.classifier[6] = nn.Linear(num_features, 2)
         
-        if weights_path:
+        if os.path.exists(weights_path):
             try:
                 self.model.load_state_dict(torch.load(weights_path, map_location=self.device))
-                print("Custom weights loaded.")
-            except FileNotFoundError:
-                print("Weights file not found. Using initialized weights (Accuracy will be low until trained).")
+                print(f"✅ Model weights loaded from {weights_path}")
+            except Exception as e:
+                print(f"❌ Error loading weights: {e}")
+        else:
+            print(f"⚠️ Warning: Weights file '{weights_path}' not found! Model will output random guesses.")
         
         self.model = self.model.to(self.device)
         self.model.eval()
@@ -32,27 +36,31 @@ class GenderClassifier:
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
         
-        self.classes = ['Female', 'Male'] # Assuming 0: Female, 1: Male (Check dataset mapping)
+        self.classes = ['Female', 'Male'] # 0: Female, 1: Male
 
     def predict(self, face_crop):
         """
         Takes a cv2 image (BGR), converts to PIL, preprocesses, and predicts gender.
         """
         if face_crop is None or face_crop.size == 0:
-            return "Unknown"
+            return "Unknown", 0.0
 
         # Convert CV2 (BGR) to PIL (RGB)
-        img = cv2.cvtColor(face_crop, cv2.COLOR_BGR2RGB)
-        pil_img = Image.fromarray(img)
-        
-        input_tensor = self.preprocess(pil_img)
-        input_batch = input_tensor.unsqueeze(0).to(self.device)
-        
-        with torch.no_grad():
-            output = self.model(input_batch)
-            _, predicted_idx = torch.max(output, 1)
+        try:
+            img = cv2.cvtColor(face_crop, cv2.COLOR_BGR2RGB)
+            pil_img = Image.fromarray(img)
             
-        return self.classes[predicted_idx.item()]
-
-# Needed because we use cv2 inside predict but forgot to import it above
-import cv2
+            input_tensor = self.preprocess(pil_img)
+            input_batch = input_tensor.unsqueeze(0).to(self.device)
+            
+            with torch.no_grad():
+                output = self.model(input_batch)
+                probabilities = torch.nn.functional.softmax(output, dim=1)[0]
+                confidence, predicted_idx = torch.max(probabilities, 0)
+                
+            predicted_label = self.classes[predicted_idx.item()]
+            return predicted_label, confidence.item()
+            
+        except Exception as e:
+            print(f"Prediction Error: {e}")
+            return "Unknown", 0.0
