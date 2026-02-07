@@ -45,18 +45,30 @@ def train_model():
         print("Please ensure your folder structure is: dataset/train/male, dataset/train/female, etc.")
         return
 
-    # 4. Load Pre-trained VGG16
-    print("Loading VGG16...")
+    # 4. Load Model
+    print("Loading Model...")
     model = models.vgg16(pretrained=True)
+    
+    # Modify Classifier first to match saved architecture
+    num_features = model.classifier[6].in_features
+    model.classifier[6] = nn.Linear(num_features, 2)
+
+    # CHECK FOR EXISTING WEIGHTS to "add" knowledge instead of starting fresh
+    if os.path.exists(MODEL_SAVE_PATH):
+        try:
+            print(f"Found existing model: {MODEL_SAVE_PATH}. Loading weights for INCREMENTAL training...")
+            model.load_state_dict(torch.load(MODEL_SAVE_PATH, map_location=device))
+            print("✅ Successfully loaded previous knowledge.")
+        except Exception as e:
+            print(f"⚠️ Could not load existing weights (Architecture might be different), starting fresh. Error: {e}")
+    else:
+        print("Starting from pre-trained ImageNet weights (Fresh Start).")
 
     # 5. Freeze Layers (Fine-tuning Strategy)
     # We freeze earlier layers so we don't destroy the basic shape recognition
     for param in model.features.parameters():
         param.requires_grad = False
 
-    # 6. Modify Classifier
-    num_features = model.classifier[6].in_features
-    model.classifier[6] = nn.Linear(num_features, 2) # Change 1000 classes to 2 (Male/Female)
     model = model.to(device)
 
     # 7. Optimizer & Loss

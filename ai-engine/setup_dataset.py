@@ -8,7 +8,7 @@ import random
 SOURCE_DATASET_PATH = r"C:/Users/BIT/Downloads/archive (1)" 
 
 DEST_DIR = "dataset"
-NUM_IMAGES_TO_COPY = 500  # Number of images to copy per category (Male/Female)
+NUM_IMAGES_TO_COPY = 1000  # Number of images to copy per category (Male/Female)
 # ---------------------
 
 def copy_images(src_folder, dest_folder, count):

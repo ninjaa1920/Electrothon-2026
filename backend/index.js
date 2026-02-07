@@ -17,19 +17,19 @@ const io = new Server(server);
 
 /* 3️⃣ DATABASE (optional in demo) */
 const db = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "postgres",
-  password: "Debayan@1904",
-  port: 5432,
+    user: "postgres",
+    host: "localhost",
+    database: "postgres",
+    password: "Debayan@1904",
+    port: 5432,
 });
 
 /* 4️⃣ SOCKET.IO LOGIC */
 let latestRisk = {
-  level: "Safe",
-  description: ""
+    level: "Safe",
+    description: ""
 };
-    
+
 
 
 
@@ -37,20 +37,24 @@ let latestRisk = {
 
 
 io.on("connection", (socket) => {
-  console.log("Client connected:", socket.id);
+    console.log("Client connected:", socket.id);
 
-  socket.emit("risk_update", latestRisk);
+    socket.emit("risk_update", latestRisk);
 
-  socket.on("new_alert", (data) => {
-    console.log("🚨 AI ALERT:", data);
+    socket.on("new_alert", (data) => {
+        console.log("🚨 AI ALERT:", data);
 
-    latestRisk = {
-      level: data.riskLevel,
-      description: data.description
-    };
+        latestRisk = {
+            level: data.riskLevel,
+            description: data.description,
+            location: data.location,
+            latitude: data.latitude,
+            longitude: data.longitude,
+            timestamp: data.timestamp
+        };
 
-    io.emit("risk_update", latestRisk);
-  });
+        io.emit("risk_update", latestRisk);
+    });
 });
 
 /* 5️⃣ EXPRESS CONFIG */
@@ -68,27 +72,27 @@ app.get("/women/login", (req, res) => res.render("auth"));
 app.get("/police/login", (req, res) => res.render("police_details"));
 
 app.post("/women/login", (req, res) => {
-  if (DEMO_MODE) return res.redirect("/women/dashboard");
+    if (DEMO_MODE) return res.redirect("/women/dashboard");
 });
 
 app.post("/women/register", (req, res) => {
-  if (DEMO_MODE) return res.redirect("/women/dashboard");
+    if (DEMO_MODE) return res.redirect("/women/dashboard");
 });
 
 app.get("/women/dashboard", (req, res) => {
-  res.render("women_dashboard");
+    res.render("women_dashboard");
 });
 
 app.post("/police/login", (req, res) => {
-  if (DEMO_MODE) return res.redirect("/police/dashboard");
+    if (DEMO_MODE) return res.redirect("/police/dashboard");
 });
 
 app.get("/police/dashboard", (req, res) => {
-  res.render("police_dashboard");
+    res.render("police_dashboard");
 });
 
 /* 7️⃣ START SERVER (REPLACES app.listen) */
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
-  console.log(`✅ Server running on port ${port}`);
+    console.log(`✅ Server running on port ${port}`);
 });

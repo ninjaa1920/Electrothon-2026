@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Police Dashboard | SafeSpace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <link rel="stylesheet" href="/police_dashboard.css">
+</head>
+
+<body>
+
+    <div class="police-dashboard">
+
+        <!-- HEADER -->
+        <header class="header">
+            <h1>🚓 SafeSpace – Police Control</h1>
+            <p>Live AI-based women safety monitoring</p>
+        </header>
+
+        <!-- STATUS BAR -->
+        <section class="status-bar safe" id="statusBar">
+            <h2 id="statusText">🟢 STATUS: SAFE</h2>
+        </section>
+
+        <!-- ALERT DETAILS -->
+        <section class="alert-details">
+            <h3>Alert Details</h3>
+
+            <div class="detail-grid">
+                <p><strong>Location ID:</strong> <span id="locationId">--</span></p>
+                <p><strong>Risk Level:</strong> <span id="riskLevel">Safe</span></p>
+                <p><strong>Risk Score:</strong> <span id="riskScore">0%</span></p>
+                <p><strong>Reason:</strong> <span id="riskReason">No threat detected</span></p>
+            </div>
+        </section>
+
+        <!-- MAP SECTION -->
+        <section class="map-section">
+            <h3>📍 Alert Location</h3>
+            <div id="map"></div>
+        </section>
+
+    </div>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Dashboard Logic -->
+    <script src="/police_dashboard.js"></script>
+
+</body>
+
+</html>
