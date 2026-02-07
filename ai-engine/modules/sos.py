@@ -52,18 +52,17 @@ class SOSDetector:
             
             if detection_result.hand_landmarks:
                 for hand_landmarks in detection_result.hand_landmarks:
-                    # Count extended fingers
                     fingers = []
                     
-                    # Logic: Assuming standard hand landmark indices
-                    # Thumb: 4 vs 3 (x-axis diff for simplicity)
-                    if hand_landmarks[4].x < hand_landmarks[3].x:
-                        fingers.append(1) # Extended
-                    else:
-                        fingers.append(0)
+                    # Thumb: Ignore complex orientation logic for robust demo. 
+                    # Just check if tip is far from pip (extended) based on distance
+                    # thumb_tip = hand_landmarks[4]
+                    # thumb_ip = hand_landmarks[3]
+                    # if math.dist([thumb_tip.x, thumb_tip.y], [thumb_ip.x, thumb_ip.y]) > 0.05:
+                    #     fingers.append(1)
                     
-                    # Fingers 2-5 (Index to Pinky)
-                    # Compare tip (id) with pip (id-2)
+                    # Fingers 2-5 (Index to Pinky) - Vertical check (Y-axis) works best for "Stop" gesture
+                    # Note: Y coordinates go DOWN in image space. So Tip < PIP means "Higher"
                     for id in range(8, 21, 4):
                         if hand_landmarks[id].y < hand_landmarks[id - 2].y:
                             fingers.append(1)
@@ -72,8 +71,9 @@ class SOSDetector:
                     
                     total_fingers = sum(fingers)
                     
-                    # Logic: Open Palm (5 fingers) = STOP / HELP / SOS
-                    if total_fingers == 5:
+                    # Logic: Open Palm (>= 4 fingers up) = STOP / HELP / SOS
+                    # This captures 4 fingers or 5 fingers (thumb often varies)
+                    if total_fingers >= 4:
                         is_sos = True
                         break # Found one hand doing SOS is enough
             

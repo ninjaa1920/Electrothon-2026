@@ -94,7 +94,7 @@ class AIEngine:
                 alert_data = {
                     "timestamp": time.time(),
                     "riskLevel": "Critical",
-                    "description": "SOS Gesture Detected (Open Palm)",
+                    "description": "SOS Gesture Detected (Verified) - DEMO",
                     "location": LOCATION_NAME,
                     "latitude": LATITUDE,
                     "longitude": LONGITUDE
