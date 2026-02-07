@@ -8,6 +8,7 @@ from ultralytics import YOLO
 import mediapipe as mp
 import os
 import numpy as np
+from collections import deque, Counter
 
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
@@ -34,7 +35,7 @@ class AIEngine:
         self.sos_detector = SOSDetector()
         
         self.gender_memory = {} # Locks gender prediction per ID
-
+        self.gender_vote_buffer = {} # ID -> deque(maxlen=7)
         # 3. Face Detector (MediaPipe Tasks API)
         fd_model_path = 'blaze_face_short_range.tflite'
         if not os.path.exists(fd_model_path):
@@ -95,8 +96,8 @@ class AIEngine:
                 cv2.putText(frame, "SOS DETECTED", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
 
             # --- B. Person Detection & Attribute Extraction ---
-            # Use .track() to persist IDs
-            results = self.yolo.track(frame, persist=True, verbose=False) 
+            # Use .track() to persist IDs with higher confidence to reduce ghosts
+            results = self.yolo.track(frame, persist=True, verbose=False, conf=0.5) 
             people_data = []
 
             for r in results:
@@ -110,6 +111,12 @@ class AIEngine:
                     if int(cls) == 0: # Person
                         x1, y1, x2, y2 = map(int, box)
                         track_id = int(track_id)
+
+                        # Aspect Ratio Check (Person should be taller than wide)
+                        w = x2 - x1
+                        h = y2 - y1
+                        if w > h * 1.2: # If width is 20% larger than height, it's likely an object (sofa/bed)
+                             continue
                         
                         # Crop Face/Body for Gender
                         person_crop = frame[y1:y2, x1:x2]
@@ -146,12 +153,35 @@ class AIEngine:
                                     if fw > 0 and fh > 0:
                                         face_img = person_crop[fy:fy+fh, fx:fx+fw]
                                         
+                                        # 0. Min Size Check (Avoid blurry faces)
+                                        # DEBUG PRINT
+                                        # print(f"ID {track_id}: Face Size {fw}x{fh}") 
+                                        
+                                        if fw < 50 or fh < 50:
+                                            # print(f"Skipping ID {track_id}: Face too small")
+                                            continue
+
                                         # Only predict if we have a FACE
                                         pred_gender, conf = self.gender_classifier.predict(face_img)
                                         
-                                        # Confidence Locking Logic
-                                        if conf > 0.75:
-                                            self.gender_memory[track_id] = pred_gender
+                                        # DEBUG PRINT
+                                        # print(f"ID {track_id}: Raw Pred {pred_gender} ({conf:.2f})")
+
+                                        # Consensus Voting Logic
+                                        if conf > 0.70:
+                                            if track_id not in self.gender_vote_buffer:
+                                                self.gender_vote_buffer[track_id] = deque(maxlen=7)
+                                            
+                                            self.gender_vote_buffer[track_id].append(pred_gender)
+
+                                            # Check for Consensus (Need at least 5 votes)
+                                            if len(self.gender_vote_buffer[track_id]) >= 5:
+                                                counts = Counter(self.gender_vote_buffer[track_id])
+                                                most_common, count = counts.most_common(1)[0]
+                                                
+                                                # If > 70% agree, LOCK it
+                                                if count / len(self.gender_vote_buffer[track_id]) > 0.7:
+                                                     self.gender_memory[track_id] = most_common
                                             
                                         # DEBUG: Save Face to check quality
                                         if (int(time.time() * 10)) % 30 == 0:
