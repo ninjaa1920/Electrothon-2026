@@ -33,7 +33,6 @@ class AIEngine:
         self.sio = socketio.Client()
         self.connect_socket()
 
-        # 2. Load Models
         self.yolo = YOLO(YOLO_MODEL_PATH)
         self.gender_classifier = GenderClassifier(weights_path='vgg16_gender.pth') # Loads VGG16
         self.risk_engine = RiskEngine()
