@@ -6,6 +6,10 @@
     <title>Women Dashboard | SafeSpace</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/dash.css">
+    <link
+       rel="stylesheet"
+       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
 </head>
 
 <body>
@@ -41,7 +45,7 @@
                     <p class="status low">LOW</p>
                 </div>
         </section>
-        <section class="map-card">
+        <section class="map-card" id="mapSection" style="display: none;">
             <h3>🗺️ Your Live Location</h3>
             <div id="map"></div>
         </section>
@@ -53,6 +57,7 @@
     </div>
 
     <!-- FRONTEND JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="/women_dashboard.js"></script>
 
     <!-- LEAFLET MAPS (FREE, NO API KEY) -->
