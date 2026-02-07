@@ -26,8 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Handle Risk Updates (Continuous from AI)
+  // Handle Risk Updates (Continuous from AI)
   socket.on("risk_update", (data) => {
     console.log("Risk Update:", data);
+
+    // DEBUG: Show last update time
+    const debugInfo = document.getElementById("debugInfo");
+    if (debugInfo) {
+      debugInfo.innerText = `Last: ${data.level} @ ${new Date().toLocaleTimeString()}`;
+    }
 
     // Update Risk UI
     updateRiskUI(data.level);
@@ -69,8 +76,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // SOS Button Logic
+  // SOS Button Logic - IMMEDIATE TRIGGER
   sosBtn.addEventListener("click", () => {
-    // Find geolocation to send SOS (User's actual location if possible)
+    const debugInfo = document.getElementById("debugInfo");
+    if (debugInfo) debugInfo.innerText = "Sending SOS...";
+
+    // 1. Send Immediate Alert (No Location yet)
+    socket.emit("new_alert", {
+      riskLevel: "Critical",
+      description: "MANUAL SOS (Locating...)",
+      location: "User_Mobile",
+      timestamp: Date.now() / 1000
+    });
+    alert("SOS ALERT SENT! Getting location...");
+
+    // 2. Try to get Location and Send Update
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
@@ -82,16 +102,10 @@ document.addEventListener("DOMContentLoaded", () => {
           longitude: longitude,
           timestamp: Date.now() / 1000
         });
-        alert("SOS SENT with Location!");
-      }, () => {
-        // Fallback if geo fails
-        socket.emit("new_alert", {
-          riskLevel: "Critical",
-          description: "MANUAL SOS TRIGGERED (No Loc)",
-          location: "User_Mobile",
-          timestamp: Date.now() / 1000
-        });
-        alert("SOS SENT!");
+        if (debugInfo) debugInfo.innerText = "SOS Sent with Lat/Long";
+      }, (err) => {
+        console.error("Geo Error:", err);
+        if (debugInfo) debugInfo.innerText = "SOS Sent (Geo Failed)";
       });
     }
   });

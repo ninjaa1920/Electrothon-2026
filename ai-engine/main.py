@@ -60,9 +60,11 @@ class AIEngine:
             print("✅ Face Detector Initialized")
         except Exception as e:
             print(f"❌ Failed to init Face Detector: {e}")
+            print("⚠️ Continuing without Gender Classification (using Person detection only)")
             self.face_detector = None
         
         self.running = True
+        self.last_sos_time = 0
         
     def connect_socket(self):
         try:
@@ -75,10 +77,13 @@ class AIEngine:
         """Sends alert logic via Socket.IO"""
         if self.sio.connected:
             self.sio.emit('new_alert', alert_data)
-            print(f"🚀 Alert Sent: {alert_data['riskLevel']}")
+            if alert_data.get('riskLevel') == 'Critical':
+                print(f"🚀 SENT CRITICAL ALERT: {alert_data.get('description')}")
+            else:
+                print(f"🚀 Alert Sent: {alert_data.get('riskLevel')}")
         else:
-            # Try to reconnect or log
-            pass
+            print("⚠️ Socket Disconnected! Reconnecting...")
+            self.connect_socket()
 
     def run(self):
         cap = cv2.VideoCapture(0) # 0 for Webcam
@@ -88,18 +93,32 @@ class AIEngine:
             if not ret: break
 
             # --- A. SOS Detection (Result determines if we need Critical Alert immediately) ---
-            is_sos, hand_landmarks = self.sos_detector.detect(frame)
+            is_sos, hand_landmarks_list = self.sos_detector.detect(frame)
+            
+            # DRAW HAND LANDMARKS (Visual Feedback)
+            if hand_landmarks_list:
+                for hand_landmarks in hand_landmarks_list:
+                    mp.solutions.drawing_utils.draw_landmarks(
+                        frame, 
+                        hand_landmarks, 
+                        mp.solutions.hands.HAND_CONNECTIONS
+                    )
             
             if is_sos:
-                alert_data = {
-                    "timestamp": time.time(),
-                    "riskLevel": "Critical",
-                    "description": "SOS Gesture Detected (Verified) - DEMO",
-                    "location": LOCATION_NAME,
-                    "latitude": LATITUDE,
-                    "longitude": LONGITUDE
-                }
-                self.send_alert(alert_data)
+                # Throttle SOS Alerts (Don't spam backend)
+                if time.time() - self.last_sos_time > 1.0:
+                    alert_data = {
+                        "timestamp": time.time(),
+                        "riskLevel": "Critical",
+                        "riskScore": 100, # Max risk for SOS
+                        "description": "SOS Gesture Detected (Verified) - DEMO",
+                        "location": LOCATION_NAME,
+                        "latitude": LATITUDE,
+                        "longitude": LONGITUDE
+                    }
+                    self.send_alert(alert_data)
+                    self.last_sos_time = time.time() # Lock "Safe" heartbeat
+                    
                 cv2.putText(frame, "SOS DETECTED", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
 
             # --- B. Person Detection & Attribute Extraction ---
@@ -246,19 +265,20 @@ class AIEngine:
                      self.send_alert(alert_data)
                 
                 # Send "Safe" heartbeat every 2 seconds
+                # ONLY if no SOS in the last 5 seconds (Prevent overwriting Critical Alert)
                 elif int(current_time) % 2 == 0:
-                     # Simple throttling using modulo on epoch time (triggered once per second window roughly)
-                     # A better way is tracking last_sent_time, but this is simple for demo
-                     alert_data = {
-                        "timestamp": current_time,
-                        "riskLevel": "Safe",
-                        "riskScore": risk_result.get('riskScore', 0),
-                        "description": "System Active - Monitoring",
-                        "location": LOCATION_NAME,
-                        "latitude": LATITUDE,
-                        "longitude": LONGITUDE
-                    }
-                     self.send_alert(alert_data)
+                     if current_time - self.last_sos_time > 5:
+                         # Simple throttling using modulo on epoch time
+                         alert_data = {
+                            "timestamp": current_time,
+                            "riskLevel": "Safe",
+                            "riskScore": risk_result.get('riskScore', 0),
+                            "description": "System Active - Monitoring",
+                            "location": LOCATION_NAME,
+                            "latitude": LATITUDE,
+                            "longitude": LONGITUDE
+                        }
+                         self.send_alert(alert_data)
 
                 # Visuals
                 # Color based on score (Green -> Yellow -> Red)
@@ -279,6 +299,13 @@ class AIEngine:
         cap.release()
         cv2.destroyAllWindows()
         self.sio.disconnect()
+        
+        # Explicit Cleanup for MediaPipe
+        if self.face_detector:
+            self.face_detector.close()
+        # SOS Detector cleanup
+        if hasattr(self.sos_detector, 'hands') and self.sos_detector.hands:
+             self.sos_detector.hands.close()
 
 
 if __name__ == '__main__':

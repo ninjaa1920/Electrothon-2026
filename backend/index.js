@@ -39,21 +39,35 @@ let latestRisk = {
 io.on("connection", (socket) => {
     console.log("Client connected:", socket.id);
 
+    // Send initial state
     socket.emit("risk_update", latestRisk);
 
     socket.on("new_alert", (data) => {
-        console.log("🚨 AI ALERT:", data);
+        // LOG EVERYTHING
+        const time = new Date().toLocaleTimeString();
+        if (data.riskLevel === "Critical") {
+            console.log(`[${time}] 🚨 CRITICAL ALERT RECEIVED:`, data.description);
+        } else {
+            // Optional: Comment out safe logs if too noisy, but for now keep them to see the rhythm
+            // console.log(`[${time}] 🟢 Safe Update`); 
+        }
 
+        // UPDATE GLOBAL STATE
         latestRisk = {
             level: data.riskLevel,
             description: data.description,
-            location: data.location,
+            location: data.location || "Unknown",
             latitude: data.latitude,
             longitude: data.longitude,
-            timestamp: data.timestamp
+            timestamp: data.timestamp || Date.now()
         };
 
+        // BROADCAST TO ALL CLIENTS
         io.emit("risk_update", latestRisk);
+
+        if (data.riskLevel === "Critical") {
+            console.log(`[${time}] 📡 Broadcasted CRITICAL RISK to all clients`);
+        }
     });
 });
 
