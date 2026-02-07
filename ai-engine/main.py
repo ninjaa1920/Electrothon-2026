@@ -7,6 +7,7 @@ import torch
 from ultralytics import YOLO
 import mediapipe as mp
 import os
+import numpy as np
 
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
@@ -116,6 +117,7 @@ class AIEngine:
 
                             
                         # 1. Try to detect face in the person crop using MP Tasks
+                        face_img = None
                         if self.face_detector and person_crop.size > 0:
                             try:
                                 # Convert to MP Image
